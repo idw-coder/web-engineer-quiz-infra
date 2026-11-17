@@ -1,87 +1,55 @@
-Express + MySQL + TypeScript Docker環境構築
+# web-engineer-quiz-infra
 
-プロジェクト名: express-mysql-docker
+「ウェブエンジニア問題集」の本番サーバー構成（Docker Compose）を置くリポジトリ。
 
-技術スタック
-- Node.js 20 (LTS)
-- Express 5.0.0
-- MySQL 8.4.0
-- TypeScript 5.7.3
-- Docker Compose
+アプリ本体（Next.js）は [idw-coder/next-basic](https://github.com/idw-coder/next-basic) にある。このリポジトリには、アプリを動かすための compose ファイル・DB の初期データ・デプロイ用ワークフローだけを置く。
 
-最終的なディレクトリ構造
-express-mysql-docker/
-├── .env
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── docker-compose.prod.yml
-├── initdb/ (空ディレクトリ)
-└── backend/
-    ├── Dockerfile
-    ├── package.json
-    ├── package-lock.json
-    ├── tsconfig.json
-    ├── nodemon.json
-    ├── node_modules/
-    ├── src/
-    │   └── index.ts
-    └── dist/ (ビルド後に生成)
+旧名は `express-mysql-docker`。もとは Express の API を置いていたが、API は Next.js の Route Handler に移り、Express は本番の compose から外した（2026-08-12）。
 
-環境変数設定 (.env)
-COMPOSE_PROJECT_NAME=express-mysql-docker
-MYSQL_ROOT_PASSWORD=rootpassword
-MYSQL_DATABASE=myapp
-MYSQL_USER=appuser
-MYSQL_PASSWORD=apppassword
-NODE_ENV=development
-DB_HOST=mysql
-DB_PORT=3306
-DB_USER=appuser
-DB_PASSWORD=apppassword
-DB_NAME=myapp
-BACKEND_PORT=8888
+## 本番の構成
 
-docker-compose.yml (開発環境)
-services: mysql (8.4.0), backend
-mysqlは3306ポート公開、healthcheck設定済み
-backendはnodemon使用、ボリュームマウントあり、ホットリロード対応
-backendはmysqlのhealthyを待ってから起動
+Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-compose.prod.yml` で次の2つのコンテナを動かしている。
 
-docker-compose.prod.yml (本番環境)
-開発版との違いは command: npm start、NODE_ENV: production、ボリュームマウントなし、mysqlポート非公開
+| サービス | イメージ | 内容 |
+| --- | --- | --- |
+| `mysql` | `mysql:8.4.0` | DB。データは `mysql_data` ボリュームに保存 |
+| `nextjs` | `ghcr.io/idw-coder/next-basic:latest` | アプリ本体。ポート 3000 |
 
-backend/Dockerfile
-マルチステージビルド (base, dev, prod)
-開発ステージは npm install + nodemon
-本番ステージは npm ci --omit=dev + tsc build
+## デプロイの流れ
 
-backend/package.json
-dependencies: express ^5.0.0, mysql2 ^3.16.3
-devDependencies: typescript ^5.7.3, @types/express ^5.0.6, @types/node ^22.10.5, nodemon ^3.1.9, ts-node ^10.9.2
-scripts: dev (nodemon), build (tsc), start (node dist/index.js)
+デプロイは2本のワークフローで行う。
 
-backend/tsconfig.json
-target: ES2020, module: commonjs
-rootDir: ./src, outDir: ./dist
-esModuleInterop: true, verbatimModuleSyntax: false
-strict: true, skipLibCheck: true
+- **アプリを更新したとき**：next-basic に push すると、そちらのワークフローがイメージをビルドして GHCR に push する。そのあとサーバーで `nextjs` コンテナだけを入れ替える
+- **このリポジトリを更新したとき**：main に push すると `.github/workflows/deploy.yml` が動き、サーバーで `git pull` と `docker-compose -f docker-compose.prod.yml up -d` を実行する
 
-backend/nodemon.json
-watch: ["src"], ext: "ts", exec: "ts-node src/index.ts"
+## ファイル
 
-backend/src/index.ts
-Express サーバー (ポート8888)
-エンドポイント: GET / (ヘルスチェック), GET /db (MySQL接続テスト)
-環境変数からDB接続情報取得
-mysql2/promise使用
+```
+.
+├── docker-compose.yml        # ローカル開発用（mysql と mailserver）
+├── docker-compose.prod.yml   # 本番用（mysql と nextjs）
+├── .github/workflows/
+│   └── deploy.yml            # 本番サーバーへのデプロイ
+└── db/
+    ├── QUIZ_TAGS_SCHEMA.sql  # クイズのタグのテーブル定義
+    └── seed-*.sql            # クイズの初期データ
+```
 
-動作確認済み
-開発環境: docker compose up で起動成功、curl http://localhost:8888/ → {"message":"health check"}、curl http://localhost:8888/db → {"message":"Database connection successful"}
-本番環境: docker compose -f docker-compose.prod.yml up --build で起動成功、同様に動作確認済み
+`backend/`（旧 Express）と `next-basic/` は `.gitignore` に入っていて、このリポジトリでは管理していない。
 
+## 環境変数
 
-構築過程で解決した技術的な問題
-TypeScriptのesModuleInterop設定が不足していたため、import express構文でエラー発生。esModuleInterop: true と verbatimModuleSyntax: false を追加して解決
-tsconfig.jsonでrootDirとoutDirをコメント解除し、ビルド成果物をdist/に出力するよう設定
-Docker Composeのversionキーは不要 (Docker Compose V2以降は obsolete)
+`.env` はどれも gitignore 済み。値はサーバー上にだけ置く。
+
+- `db/.env`：MySQL コンテナが読む（`MYSQL_ROOT_PASSWORD` など）
+- `nextjs/.env`：`nextjs` コンテナが読む。DB の認証情報・認証まわりの秘密鍵・Stripe のキーを置く
+
+`DB_HOST` / `DB_PORT` / `DB_NAME` / `DB_CONNECTION_LIMIT` は `docker-compose.prod.yml` の `environment:` に書いてあるので、`nextjs/.env` には入れない。`NEXT_PUBLIC_*` はビルド時にイメージへ入るので、ここには不要。
+
+## ローカル開発
+
+```bash
+docker compose up
+```
+
+MySQL が 3306 番、SMTP コンテナ（`boky/postfix`）が 1025 番で立ち上がる。Next.js は next-basic 側で `npm run dev` を実行する。
