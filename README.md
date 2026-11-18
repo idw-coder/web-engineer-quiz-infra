@@ -1,4 +1,17 @@
+<p align="center">
+  <img src=".github/assets/weqLogo.png" alt="Web Engineer Quiz" width="240">
+</p>
+
 # web-engineer-quiz-infra
+
+[![Deploy to Lightsail](https://github.com/idw-coder/web-engineer-quiz-infra/actions/workflows/deploy.yml/badge.svg)](https://github.com/idw-coder/web-engineer-quiz-infra/actions/workflows/deploy.yml)
+[![Open in Visual Studio Code](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://open.vscode.dev/idw-coder/web-engineer-quiz-infra)
+
+![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?logo=docker&logoColor=white)
+![MySQL 8.4](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![AWS Lightsail](https://img.shields.io/badge/AWS%20Lightsail-FF9900?logo=amazonwebservices&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
 
 「ウェブエンジニア問題集」の本番サーバー構成（Docker Compose）を置くリポジトリ。
 
