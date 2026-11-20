@@ -39,7 +39,7 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 
 ```
 .
-├── docker-compose.yml        # ローカル開発用（mysql と mailserver）
+├── docker-compose.yml        # ローカル開発用（mysql）
 ├── docker-compose.prod.yml   # 本番用（mysql と nextjs）
 ├── .github/workflows/
 │   └── deploy.yml            # 本番サーバーへのデプロイ
@@ -65,4 +65,4 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 docker compose up
 ```
 
-MySQL が 3306 番、SMTP コンテナ（`boky/postfix`）が 1025 番で立ち上がる。Next.js は next-basic 側で `npm run dev` を実行する。
+MySQL が 3306 番で立ち上がる。Next.js は next-basic 側で `npm run dev` を実行する。

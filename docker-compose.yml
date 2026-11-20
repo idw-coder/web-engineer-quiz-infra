@@ -17,36 +17,5 @@ services:
       timeout: 5s
       retries: 5
 
-  mailserver:
-    image: boky/postfix
-    container_name: mailserver
-    environment:
-      - ALLOWED_SENDER_DOMAINS=localhost
-    ports:
-      - "127.0.0.1:1025:25"
-
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   container_name: backend
-  #   command: npm run dev
-  #   env_file:
-  #     - ./backend/.env
-  #   environment:
-  #     - DB_HOST=mysql
-  #     - SMTP_HOST=mailserver
-  #     - SMTP_PORT=25
-  #   ports:
-  #     - "8888:8888"
-  #   volumes:
-  #     - ./backend:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #     mailserver:
-  #       condition: service_started
-
 volumes:
   mysql_data:
