@@ -1,3 +1,5 @@
+name: web-engineer-quiz-infra
+
 services:
   mysql:
     image: mysql:8.4.0
@@ -5,7 +7,7 @@ services:
     env_file:
       - ./db/.env
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
@@ -21,7 +23,7 @@ services:
     environment:
       - ALLOWED_SENDER_DOMAINS=localhost
     ports:
-      - "1025:25"
+      - "127.0.0.1:1025:25"
 
   # backend:
   #   build:
