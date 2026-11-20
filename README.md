@@ -25,7 +25,7 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 
 | サービス | イメージ | 内容 |
 | --- | --- | --- |
-| `mysql` | `mysql:8.4.0` | DB。データは `mysql_data` ボリュームに保存 |
+| `mysql` | `mysql:8.4.13` | DB。データは `mysql_data` ボリュームに保存 |
 | `nextjs` | `ghcr.io/idw-coder/next-basic:latest` | アプリ本体。ポート 3000 |
 
 ## デプロイの流れ
