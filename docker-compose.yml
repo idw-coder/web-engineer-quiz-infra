@@ -19,3 +19,6 @@ services:
 
 volumes:
   mysql_data:
+    # プロジェクト名を付ける前（旧リポジトリ名 express-mysql-docker のころ）に作ったボリュームを使い続ける。
+    # name を外すと compose は web-engineer-quiz-infra_mysql_data という空のボリュームを新しく作る
+    name: express-mysql-docker_mysql_data
