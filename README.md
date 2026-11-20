@@ -47,7 +47,6 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 │   └── .env.example          # nextjs/.env のテンプレート
 └── db/
     ├── .env.example          # db/.env のテンプレート
-    ├── QUIZ_TAGS_SCHEMA.sql  # クイズのタグのテーブル定義
     └── seed-*.sql            # クイズの初期データ
 ```
 
