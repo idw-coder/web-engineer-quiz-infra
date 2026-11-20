@@ -6,3 +6,4 @@ db/data/
 node_modules/
 .env
 *.log
+.DS_Store
