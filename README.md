@@ -46,6 +46,7 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 ├── nextjs/
 │   └── .env.example          # nextjs/.env のテンプレート
 └── db/
+    ├── .env.example          # db/.env のテンプレート
     ├── QUIZ_TAGS_SCHEMA.sql  # クイズのタグのテーブル定義
     └── seed-*.sql            # クイズの初期データ
 ```
@@ -54,16 +55,17 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 
 ## 環境変数
 
-`.env` はどれも gitignore 済み。値はサーバー上にだけ置く。
+`.env` はどれも gitignore 済み。同じ場所にある `.env.example` をコピーして値を埋める。
 
-- `db/.env`：MySQL コンテナが読む（`MYSQL_ROOT_PASSWORD` など）
-- `nextjs/.env`：`nextjs` コンテナが読む。DB の認証情報・認証まわりの秘密鍵・Stripe のキーを置く
+- `db/.env`：MySQL コンテナが読む（`MYSQL_ROOT_PASSWORD` など）。ローカルと本番サーバーの両方に置く
+- `nextjs/.env`：本番の `nextjs` コンテナが読む。本番サーバーにだけ置く。DB の認証情報・認証まわりの秘密鍵・Stripe のキーを置く
 
 `DB_HOST` / `DB_PORT` / `DB_NAME` / `DB_CONNECTION_LIMIT` は `docker-compose.prod.yml` の `environment:` に書いてあるので、`nextjs/.env` には入れない。`NEXT_PUBLIC_*` はビルド時にイメージへ入るので、ここには不要。
 
 ## ローカル開発
 
 ```bash
+cp db/.env.example db/.env   # 初回だけ。値を埋める
 docker compose up
 ```
 
