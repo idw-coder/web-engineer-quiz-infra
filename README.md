@@ -15,7 +15,7 @@
 
 「ウェブエンジニア問題集」の本番サーバー構成（Docker Compose）を置くリポジトリ。
 
-アプリ本体（Next.js）は [idw-coder/next-basic](https://github.com/idw-coder/next-basic) にある。このリポジトリには、アプリを動かすための compose ファイル・DB の初期データ・デプロイ用ワークフローだけを置く。
+アプリ本体（Next.js）は [idw-coder/next-basic](https://github.com/idw-coder/next-basic) にある。このリポジトリには、アプリを動かすための compose ファイル・環境変数のテンプレート・デプロイ用ワークフローだけを置く。テーブル定義とマイグレーションは next-basic の `db/migrations/` にある。
 
 旧名は `express-mysql-docker`。もとは Express の API を置いていたが、API は Next.js の Route Handler に移り、Express は本番の compose から外した（2026-08-12）。
 
@@ -46,8 +46,7 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 ├── nextjs/
 │   └── .env.example          # nextjs/.env のテンプレート
 └── db/
-    ├── .env.example          # db/.env のテンプレート
-    └── seed-*.sql            # クイズの初期データ
+    └── .env.example          # db/.env のテンプレート
 ```
 
 `backend/`（旧 Express）と `next-basic/` は `.gitignore` に入っていて、このリポジトリでは管理していない。
