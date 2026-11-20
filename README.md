@@ -43,6 +43,8 @@ Lightsail の `/var/www/app` にこのリポジトリを clone して、`docker-
 ├── docker-compose.prod.yml   # 本番用（mysql と nextjs）
 ├── .github/workflows/
 │   └── deploy.yml            # 本番サーバーへのデプロイ
+├── nextjs/
+│   └── .env.example          # nextjs/.env のテンプレート
 └── db/
     ├── QUIZ_TAGS_SCHEMA.sql  # クイズのタグのテーブル定義
     └── seed-*.sql            # クイズの初期データ
